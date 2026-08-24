@@ -18,6 +18,7 @@ route_tables:
 
 public_ips:
   pip-teste-001:
+  pip-teste-002:
 
 key_vaults:
   kv-teste-001:
