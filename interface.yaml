@@ -1,0 +1,39 @@
+subscriptions:
+  sub-teste-001:
+
+resource_groups:
+  rg-teste-001:
+
+storage_accounts:
+  sa-teste-001:
+  sa-teste-002:
+
+network_security_groups:
+  nsg-teste-001:
+
+route_tables:
+  rt-teste-001:
+
+public_ips:
+  pip-teste-001:
+
+key_vaults:
+  kv-teste-001:
+
+managed_identities:
+  id-teste-001:
+
+virtual_networks:
+  vnet-teste-001:
+
+cosmos_db_accounts:
+  cosmos-teste-001:
+
+virtual_machines:
+  vm-teste-001:
+
+sql_databases:
+  sqldb-teste-001:
+
+aks_clusters:
+  aks-teste-001:
