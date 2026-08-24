@@ -14,7 +14,11 @@ after wave N has finished completely.
 ```bash
 python3 waves.py                  # reads ./interface.yaml, prints resources grouped by wave
 python3 waves.py path/to/file.yaml  # reads a specific interface file
+python3 waves.py --commit         # also prints an "alterado" section: resources changed between HEAD~1 and HEAD
+python3 waves.py --merge          # also prints "alterado" for resources changed between the PR base branch and HEAD
 ```
+
+`--commit` and `--merge` are mutually exclusive and additive: the full wave listing is always printed first, then an `alterado` section listing only the instance keys that were added, removed, or changed, grouped by wave (empty when there's no diff). `--commit` compares `HEAD~1` against `HEAD` and works both locally and in CI. `--merge` only works inside a GitHub Actions `pull_request` run — it reads the target branch from `GITHUB_BASE_REF` and compares it against `HEAD`; it has no local fallback and exits with an error if that env var isn't set, since there's no such thing as a local PR to diff against.
 
 Requires PyYAML (`import yaml`).
 
