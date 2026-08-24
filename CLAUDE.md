@@ -12,13 +12,13 @@ after wave N has finished completely.
 ## Commands
 
 ```bash
-python3 waves.py                  # reads ./interface.yaml, prints resources grouped by wave
-python3 waves.py path/to/file.yaml  # reads a specific interface file
-python3 waves.py --commit         # also prints an "alterado" section: resources changed between HEAD~1 and HEAD
-python3 waves.py --merge          # also prints "alterado" for resources changed between the PR base branch and HEAD
+python3 .github/scripts/waves.py                  # reads ./interface.yaml, prints resource types grouped by wave
+python3 .github/scripts/waves.py path/to/file.yaml  # reads a specific interface file
+python3 .github/scripts/waves.py --commit         # also prints a "git-diff" line: resource types changed between HEAD~1 and HEAD
+python3 .github/scripts/waves.py --merge          # also prints "git-diff" for resource types changed between the PR base branch and HEAD
 ```
 
-`--commit` and `--merge` are mutually exclusive and additive: the full wave listing is always printed first, then an `alterado` section listing only the instance keys that were added, removed, or changed, grouped by wave (empty when there's no diff). `--commit` compares `HEAD~1` against `HEAD` and works both locally and in CI. `--merge` only works inside a GitHub Actions `pull_request` run — it reads the target branch from `GITHUB_BASE_REF` and compares it against `HEAD`; it has no local fallback and exits with an error if that env var isn't set, since there's no such thing as a local PR to diff against.
+`waves.py` lives under `.github/scripts/` (not the repo root) so it can be invoked directly by the GitHub Actions workflow at `.github/workflows/waves.yml`, which runs `--commit` on every push and `--merge` on every pull_request. `--commit` and `--merge` are mutually exclusive and additive: the full wave listing is always printed first, then a single `git-diff - [...]` line listing only the resource *type* keys (e.g. `storage_accounts`, not instance names) that had an instance added, removed, or changed, deduplicated and flat — not grouped by wave. It prints `git-diff - []` when there's no diff. `--commit` compares `HEAD~1` against `HEAD` and works both locally and in CI. `--merge` only works inside a GitHub Actions `pull_request` run — it reads the target branch from `GITHUB_BASE_REF` and compares it against `HEAD`; it has no local fallback and exits with an error if that env var isn't set, since there's no such thing as a local PR to diff against.
 
 Requires PyYAML (`import yaml`).
 
@@ -33,11 +33,12 @@ different forms that must be kept in sync manually:
   resource *types* in plural snake_case (e.g. `storage_accounts`,
   `resource_groups`); the keys nested under each type are individual
   resource instances (e.g. `sa-teste-001`), with no values.
-- `waves.py` — `WAVE_BY_RESOURCE_TYPE` hardcodes the same resource
-  type → wave mapping from `ideia.md`. `group_by_wave()` walks
+- `.github/scripts/waves.py` — `WAVE_BY_RESOURCE_TYPE` hardcodes the same
+  resource type → wave mapping from `ideia.md`. `group_by_wave()` walks
   `interface.yaml`, looks up each resource type's wave, and collects the
-  instance keys (not the type names) into per-wave lists. Unrecognized
-  resource types are skipped with a warning to stderr rather than failing.
+  type keys themselves (deduplicated, not the instance names) into
+  per-wave lists. Unrecognized resource types are skipped with a warning
+  to stderr rather than failing.
 
 The core invariant of the model (documented previously in conversation, not
 currently written in `ideia.md`): a resource may only depend on resources

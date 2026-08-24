@@ -1,0 +1,35 @@
+name: waves
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  waves:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (historico completo)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configura Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instala dependencias
+        run: pip install pyyaml
+
+      - name: Garante a branch base do PR localmente
+        if: github.event_name == 'pull_request'
+        run: git fetch origin ${{ github.base_ref }}:${{ github.base_ref }}
+
+      - name: Waves - diff do commit (push)
+        if: github.event_name == 'push'
+        run: python3 .github/scripts/waves.py --commit
+
+      - name: Waves - diff do PR (pull_request)
+        if: github.event_name == 'pull_request'
+        run: python3 .github/scripts/waves.py --merge

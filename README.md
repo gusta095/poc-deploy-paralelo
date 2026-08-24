@@ -19,7 +19,7 @@ Lê `./interface.yaml` por padrão e imprime os tipos de recurso agrupados
 por wave:
 
 ```bash
-python3 waves.py
+python3 .github/scripts/waves.py
 ```
 
 ```
@@ -34,7 +34,7 @@ wave 6 - ['aks_clusters', 'sql_databases', 'virtual_machines']
 ### Usar um arquivo de interface diferente
 
 ```bash
-python3 waves.py caminho/para/outro-interface.yaml
+python3 .github/scripts/waves.py caminho/para/outro-interface.yaml
 ```
 
 ### Ver o que mudou no último commit
@@ -45,7 +45,7 @@ adicionada, removida ou alterada no último commit. Funciona tanto local
 quanto em CI:
 
 ```bash
-python3 waves.py --commit
+python3 .github/scripts/waves.py --commit
 ```
 
 ```
@@ -66,10 +66,16 @@ variável de ambiente `GITHUB_BASE_REF` para saber qual é a branch base —
 localmente não tem como simular um PR de verdade:
 
 ```bash
-python3 waves.py --merge
+python3 .github/scripts/waves.py --merge
 ```
 
 `--commit` e `--merge` são mutuamente exclusivos.
+
+### GitHub Action
+
+`.github/workflows/waves.yml` roda isso automaticamente: `--commit` em
+todo push, `--merge` em todo pull_request (buscando a branch base antes,
+via `git fetch origin`, para que o `GITHUB_BASE_REF` seja resolvível).
 
 ## Arquitetura
 
@@ -79,7 +85,7 @@ sincronizados manualmente — não há uma fonte única de verdade:
 - `ideia.md` — definição legível do modelo: quais tipos de recurso Azure
   existem e em qual wave cada um entra.
 - `interface.yaml` — inventário de exemplo de recursos, agrupados por tipo.
-- `waves.py` — implementação: o dict `WAVE_BY_RESOURCE_TYPE` reproduz o
+- `.github/scripts/waves.py` — implementação: o dict `WAVE_BY_RESOURCE_TYPE` reproduz o
   mesmo mapeamento tipo → wave, e as funções do arquivo agrupam/comparam
   os recursos do `interface.yaml` com base nele.
 
