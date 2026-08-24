@@ -22,9 +22,11 @@ public_ips:
 
 key_vaults:
   kv-teste-001:
+  kv-teste-002:
 
 managed_identities:
   id-teste-001:
+  id-teste-002:
 
 virtual_networks:
   vnet-teste-001:
