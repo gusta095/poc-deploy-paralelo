@@ -106,22 +106,21 @@ def diff_changed_keys(old_interface, new_interface):
     all_keys = set(old_flat) | set(new_flat)
     return {key for key in all_keys if old_flat.get(key) != new_flat.get(key)}
 
-def group_changed_by_wave(old_interface, new_interface):
-    """Agrupa em waves os tipos de recurso com instancias alteradas, no mesmo formato de group_by_wave()."""
+def changed_resource_types(old_interface, new_interface):
+    """Retorna a lista ordenada dos tipos de recurso com alguma instancia alterada."""
     old_flat = flatten_instances(old_interface)
     new_flat = flatten_instances(new_interface)
     changed_keys = diff_changed_keys(old_interface, new_interface)
 
-    waves = {}
+    changed_types = set()
     for resource_key in changed_keys:
         resource_type, _ = new_flat.get(resource_key) or old_flat[resource_key]
-        wave = WAVE_BY_RESOURCE_TYPE.get(resource_type)
-        if wave is None:
+        if resource_type not in WAVE_BY_RESOURCE_TYPE:
             print(f"aviso: tipo de recurso desconhecido: {resource_type}", file=sys.stderr)
             continue
-        waves.setdefault(wave, set()).add(resource_type)
+        changed_types.add(resource_type)
 
-    return {wave: sorted(resource_types) for wave, resource_types in waves.items()}
+    return sorted(changed_types)
 
 def resolve_diff_refs(args):
     """Define o par (old_ref, new_ref) a comparar, com base em --commit/--merge."""
@@ -182,13 +181,9 @@ def main():
         old_ref, new_ref = refs
         old_interface = load_interface_at_ref(old_ref, args.interface_file)
         new_interface = load_interface_at_ref(new_ref, args.interface_file)
-        changed_waves = group_changed_by_wave(old_interface, new_interface)
+        changed_types = changed_resource_types(old_interface, new_interface)
         print()
-        print("alterado:")
-        if changed_waves:
-            print_waves(changed_waves)
-        else:
-            print("(nenhuma mudanca)")
+        print(f"git-diff - {changed_types}")
 
     return 0
 

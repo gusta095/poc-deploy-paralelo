@@ -39,8 +39,8 @@ python3 waves.py caminho/para/outro-interface.yaml
 
 ### Ver o que mudou no último commit
 
-Compara `HEAD~1` com `HEAD` e mostra, além das waves completas, um bloco
-`alterado:` só com os tipos de recurso que tiveram alguma instância
+Compara `HEAD~1` com `HEAD` e mostra, além das waves completas, uma linha
+`git-diff - [...]` com os tipos de recurso que tiveram alguma instância
 adicionada, removida ou alterada no último commit. Funciona tanto local
 quanto em CI:
 
@@ -52,12 +52,11 @@ python3 waves.py --commit
 wave 1 - ['subscriptions']
 ...
 
-alterado:
-wave 5 - ['storage_accounts']
+git-diff - ['public_ips', 'storage_accounts']
 ```
 
-Se não houve mudança no `interface.yaml`, o bloco `alterado:` aparece
-vazio (`(nenhuma mudanca)`).
+Se não houve mudança no `interface.yaml`, a linha aparece vazia:
+`git-diff - []`.
 
 ### Ver o que muda em um Pull Request
 
