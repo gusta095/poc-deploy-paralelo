@@ -7,12 +7,14 @@ resource_groups:
 storage_accounts:
   sa-teste-001:
   sa-teste-002:
+  sa-teste-003:
 
 network_security_groups:
   nsg-teste-001:
 
 route_tables:
   rt-teste-001:
+  rt-teste-002:
 
 public_ips:
   pip-teste-001:
